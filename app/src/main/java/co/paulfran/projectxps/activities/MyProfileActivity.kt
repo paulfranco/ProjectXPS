@@ -69,6 +69,20 @@ class MyProfileActivity : BaseActivity() {
                 )
             }
         }
+        btn_update.setOnClickListener {
+
+            // Here if the image is not selected then update the other details of user.
+            if (mSelectedImageFileUri != null) {
+
+                uploadUserImage()
+            } else {
+
+                showProgressDialog(resources.getString(R.string.please_wait))
+
+                // Call a function to update user details in the database.
+                updateUserProfileData()
+            }
+        }
     }
 
     /**
@@ -143,6 +157,10 @@ class MyProfileActivity : BaseActivity() {
      * A function to set the existing details in UI.
      */
     fun setUserDataInUI(user: User) {
+
+        // Initialize the user details variable
+        mUserDetails = user
+
         Glide
             .with(this@MyProfileActivity)
             .load(user.image)
@@ -253,5 +271,15 @@ class MyProfileActivity : BaseActivity() {
 
         // Update the data in the database.
         FirestoreClass().updateUserProfileData(this@MyProfileActivity, userHashMap)
+    }
+
+    /**
+     * A function to notify the user profile is updated successfully.
+     */
+    fun profileUpdateSuccess() {
+
+        hideProgressDialog()
+
+        finish()
     }
 }

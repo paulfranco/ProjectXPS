@@ -114,6 +114,7 @@ class FirestoreClass {
                     "Error while creating a board.",
                     e
                 )
+                Toast.makeText(activity, "Error when updating the profile", Toast.LENGTH_SHORT).show()
             }
     }
 }
