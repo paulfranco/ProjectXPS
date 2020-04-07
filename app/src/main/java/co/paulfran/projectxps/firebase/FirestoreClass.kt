@@ -1,6 +1,8 @@
 package co.paulfran.projectxps.firebase
 
+import android.app.Activity
 import android.util.Log
+import co.paulfran.projectxps.activities.MainActivity
 import co.paulfran.projectxps.activities.SignInActivity
 import co.paulfran.projectxps.activities.SignUpActivity
 import co.paulfran.projectxps.models.User
@@ -24,7 +26,7 @@ class FirestoreClass {
     /**
      * A function to SignIn using firebase and get the user details from Firestore Database.
      */
-    fun signInUser(activity: SignInActivity) {
+    fun signInUser(activity: Activity) {
 
         // Here we pass the collection name from which we wants the data.
         mFireStore.collection(Constants.USERS)
@@ -39,11 +41,26 @@ class FirestoreClass {
                 // Here we have received the document snapshot which is converted into the User Data model object.
                 val loggedInUser = document.toObject(User::class.java)!!
 
-                // Here call a function of base activity for transferring the result to it.
-                activity.signInSuccess(loggedInUser)
+                when(activity) {
+                    is SignInActivity -> {
+                        activity.signInSuccess(loggedInUser)
+                    }
+                    is MainActivity -> {
+                        activity.updateNavigationUserDetails(loggedInUser)
+                    }
+                }
 
             }
             .addOnFailureListener { e ->
+                when (activity) {
+                    is SignInActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while getting loggedIn user details",
