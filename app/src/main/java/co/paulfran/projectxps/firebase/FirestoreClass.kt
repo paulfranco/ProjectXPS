@@ -3,6 +3,7 @@ package co.paulfran.projectxps.firebase
 import android.app.Activity
 import android.util.Log
 import co.paulfran.projectxps.activities.MainActivity
+import co.paulfran.projectxps.activities.MyProfileActivity
 import co.paulfran.projectxps.activities.SignInActivity
 import co.paulfran.projectxps.activities.SignUpActivity
 import co.paulfran.projectxps.models.User
@@ -26,7 +27,7 @@ class FirestoreClass {
     /**
      * A function to SignIn using firebase and get the user details from Firestore Database.
      */
-    fun signInUser(activity: Activity) {
+    fun loadUserData(activity: Activity) {
 
         // Here we pass the collection name from which we wants the data.
         mFireStore.collection(Constants.USERS)
@@ -48,6 +49,9 @@ class FirestoreClass {
                     is MainActivity -> {
                         activity.updateNavigationUserDetails(loggedInUser)
                     }
+                    is MyProfileActivity -> {
+                        activity.setUserDataInUI(loggedInUser)
+                    }
                 }
 
             }
@@ -57,6 +61,9 @@ class FirestoreClass {
                         activity.hideProgressDialog()
                     }
                     is MainActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                    is MyProfileActivity -> {
                         activity.hideProgressDialog()
                     }
 
