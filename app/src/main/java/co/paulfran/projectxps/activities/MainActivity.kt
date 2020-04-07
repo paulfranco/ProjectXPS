@@ -1,7 +1,9 @@
 package co.paulfran.projectxps.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +19,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener  {
+
+    /**
+     * A companion object to declare the constants.
+     */
+    companion object {
+        //A unique code for starting the activity for result
+        const val MY_PROFILE_REQUEST_CODE: Int = 11
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +52,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.nav_my_profile -> {
-                startActivity(Intent(this@MainActivity, MyProfileActivity::class.java))
+                startActivityForResult(Intent(this@MainActivity, MyProfileActivity::class.java), MY_PROFILE_REQUEST_CODE)
                 Toast.makeText(this@MainActivity, "My Profile", Toast.LENGTH_SHORT).show()
             }
 
@@ -60,6 +70,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         drawer_layout.closeDrawer(GravityCompat.START)
 
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK
+            && requestCode == MY_PROFILE_REQUEST_CODE
+        ) {
+            // Get the user updated details.
+            FirestoreClass().loadUserData(this@MainActivity)
+        } else {
+            Log.e("Cancelled", "Cancelled")
+        }
     }
 
     private fun setupActionBar() {
@@ -107,4 +130,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         // Set the user name
         navUsername.text = user.name
     }
+
+
 }
