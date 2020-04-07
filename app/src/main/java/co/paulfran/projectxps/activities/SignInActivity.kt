@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.WindowManager
 import android.widget.Toast
 import co.paulfran.projectxps.R
+import co.paulfran.projectxps.models.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
@@ -79,6 +80,17 @@ class SignInActivity : BaseActivity() {
     }
 
     /**
+     * A function to get the user details from the firestore database after authentication.
+     */
+    fun signInSuccess(user: User) {
+
+        hideProgressDialog()
+
+        startActivity(Intent(this@SignInActivity, MainActivity::class.java))
+        finish()
+    }
+
+    /**
      * A function to validate the entries of a user.
      */
     private fun validateForm(email: String, password: String): Boolean {
@@ -92,4 +104,6 @@ class SignInActivity : BaseActivity() {
             true
         }
     }
+
+
 }
