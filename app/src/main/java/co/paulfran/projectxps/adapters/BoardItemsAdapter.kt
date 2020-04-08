@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import co.paulfran.projectxps.R
 import co.paulfran.projectxps.models.Board
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.item_board.view.*
 
 open class BoardItemsAdapter(
     private val context: Context,
