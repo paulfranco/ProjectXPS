@@ -33,16 +33,7 @@ class MyProfileActivity : BaseActivity() {
     // Add a global variable for URI of a selected image from phone storage.
     private var mSelectedImageFileUri: Uri? = null
 
-    /**
-     * A companion object to declare the constants.
-     */
-    companion object {
-        //A unique code for asking the Read Storage Permission using this we will be check and identify in the method onRequestPermissionsResult
-        private const val READ_STORAGE_PERMISSION_CODE = 1
 
-        private const val PICK_IMAGE_REQUEST_CODE = 2
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +48,7 @@ class MyProfileActivity : BaseActivity() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED
             ) {
-                showImageChooser()
+                Constants.showImageChooser(this)
             } else {
                 /*Requests permissions to be granted to this application. These permissions
                  must be requested in your manifest, they should not be granted to your app,
@@ -65,7 +56,7 @@ class MyProfileActivity : BaseActivity() {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    READ_STORAGE_PERMISSION_CODE
+                    Constants.READ_STORAGE_PERMISSION_CODE
                 )
             }
         }
@@ -115,10 +106,10 @@ class MyProfileActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == READ_STORAGE_PERMISSION_CODE) {
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
             //If permission is granted
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showImageChooser()
+                Constants.showImageChooser(this)
             } else {
                 //Displaying another toast if permission is not granted
                 Toast.makeText(
@@ -133,7 +124,7 @@ class MyProfileActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK
-            && requestCode == PICK_IMAGE_REQUEST_CODE
+            && requestCode == Constants.PICK_IMAGE_REQUEST_CODE
             && data!!.data != null
         ) {
             // The uri of selection image from phone storage.
@@ -175,31 +166,7 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    /**
-     * A function for user profile image selection from phone storage.
-     */
-    private fun showImageChooser() {
-        // An intent for launching the image selection of phone storage.
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        // Launches the image selection of phone storage using the constant code.
-        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
-    }
 
-    private fun getFileExtension(uri: Uri?): String? {
-        /*
-         * MimeTypeMap: Two-way map that maps MIME-types to file extensions and vice versa.
-         *
-         * getSingleton(): Get the singleton instance of MimeTypeMap.
-         *
-         * getExtensionFromMimeType: Return the registered extension for the given MIME type.
-         *
-         * contentResolver.getType: Return the MIME type of the given content URL.
-         */
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
-    }
 
     /**
      * A function to upload the selected user image to firebase cloud storage.
@@ -212,7 +179,7 @@ class MyProfileActivity : BaseActivity() {
 
             //getting the storage reference
             val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" + System.currentTimeMillis() + "." + getFileExtension(
+                "USER_IMAGE" + System.currentTimeMillis() + "." + Constants.getFileExtension(this,
                     mSelectedImageFileUri
                 )
             )
