@@ -2,9 +2,12 @@ package co.paulfran.projectxps.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import co.paulfran.projectxps.R
+import co.paulfran.projectxps.adapters.TaskListItemsAdapter
 import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.Board
+import co.paulfran.projectxps.models.Task
 import co.paulfran.projectxps.utils.Constants
 import kotlinx.android.synthetic.main.activity_task_list.*
 
@@ -52,6 +55,19 @@ class TaskListActivity : BaseActivity() {
 
         // Call the function to setup action bar.
         setupActionBar(board.name)
+
+        // Here we are appending an item view for adding a list task list for the board.
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        board.taskList.add(addTaskList)
+
+        rv_task_list.layoutManager =
+            LinearLayoutManager(this@TaskListActivity, LinearLayoutManager.HORIZONTAL, false)
+        rv_task_list.setHasFixedSize(true)
+
+        // Create an instance of TaskListItemsAdapter and pass the task list to it.
+        val adapter = TaskListItemsAdapter(this@TaskListActivity, board.taskList)
+        rv_task_list.adapter = adapter // Attach the adapter to the recyclerView.
+
 
     }
 }
