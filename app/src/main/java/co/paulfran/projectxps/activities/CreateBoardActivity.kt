@@ -20,10 +20,16 @@ import java.io.IOException
 class CreateBoardActivity : BaseActivity() {
 
     private var mSelectedImageFileUri: Uri? = null
+    private lateinit var mUserName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_board)
+
+        // receive username from intent
+        if (intent.hasExtra(Constants.NAME)) {
+            mUserName = intent.getStringExtra(Constants.NAME)!!
+        }
 
         setupActionBar()
 
@@ -113,5 +119,15 @@ class CreateBoardActivity : BaseActivity() {
                 e.printStackTrace()
             }
         }
+    }
+
+    /**
+     * A function for notifying the board is created successfully.
+     */
+    fun boardCreatedSuccessfully() {
+
+        hideProgressDialog()
+
+        finish()
     }
 }

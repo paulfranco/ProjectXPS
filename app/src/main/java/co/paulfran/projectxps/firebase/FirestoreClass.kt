@@ -3,10 +3,8 @@ package co.paulfran.projectxps.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import co.paulfran.projectxps.activities.MainActivity
-import co.paulfran.projectxps.activities.MyProfileActivity
-import co.paulfran.projectxps.activities.SignInActivity
-import co.paulfran.projectxps.activities.SignUpActivity
+import co.paulfran.projectxps.activities.*
+import co.paulfran.projectxps.models.Board
 import co.paulfran.projectxps.models.User
 import co.paulfran.projectxps.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -115,6 +113,28 @@ class FirestoreClass {
                     e
                 )
                 Toast.makeText(activity, "Error when updating the profile", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board) {
+
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, "Board created successfully.")
+
+                Toast.makeText(activity, "Board created successfully.", Toast.LENGTH_SHORT).show()
+
+                activity.boardCreatedSuccessfully()
+            }
+            .addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "Error while creating a board.",
+                    e
+                )
             }
     }
 }

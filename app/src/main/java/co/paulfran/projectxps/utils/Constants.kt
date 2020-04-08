@@ -8,7 +8,10 @@ import android.webkit.MimeTypeMap
 import co.paulfran.projectxps.activities.MyProfileActivity
 
 object Constants {
+    // This  is used for the collection name for USERS.
     const val USERS: String = "users"
+    // This  is used for the collection name for BOARDS.
+    const val BOARDS: String = "boards"
 
     // Firebase database field names
     const val IMAGE: String = "image"

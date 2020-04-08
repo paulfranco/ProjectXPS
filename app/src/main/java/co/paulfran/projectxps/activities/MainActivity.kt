@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import co.paulfran.projectxps.R
 import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.User
+import co.paulfran.projectxps.utils.Constants
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -28,6 +29,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         const val MY_PROFILE_REQUEST_CODE: Int = 11
     }
 
+    private lateinit var mUserName: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,7 +44,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Send user to the create board activity when clicking the FAB
         fab_create_board.setOnClickListener {
-            startActivity(Intent(this, CreateBoardActivity::class.java))
+            val intent = Intent(this@MainActivity, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
         }
     }
 
@@ -116,6 +121,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      * A function to get the current user details from firebase.
      */
     fun updateNavigationUserDetails(user: User) {
+
+        mUserName = user.name
+
         // The instance of the header view of the navigation view.
         val headerView = nav_view.getHeaderView(0)
 
