@@ -38,6 +38,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Get the current logged in user details.
         FirestoreClass().loadUserData(this)
+
+        // Send user to the create board activity when clicking the FAB
+        fab_create_board.setOnClickListener {
+            startActivity(Intent(this, CreateBoardActivity::class.java))
+        }
     }
 
     override fun onBackPressed() {
