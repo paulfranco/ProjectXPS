@@ -2,8 +2,12 @@ package co.paulfran.projectxps.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import co.paulfran.projectxps.R
+import co.paulfran.projectxps.adapters.MemberListItemsAdapter
+import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.Board
+import co.paulfran.projectxps.models.User
 import co.paulfran.projectxps.utils.Constants
 import kotlinx.android.synthetic.main.activity_members.*
 
@@ -20,6 +24,14 @@ class MembersActivity : BaseActivity() {
         }
 
         setupActionBar()
+
+        // Get the members list details from the database
+        // Show the progress dialog.
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getAssignedMembersListDetails(
+            this@MembersActivity,
+            mBoardDetails.assignedTo
+        )
     }
 
     /**
@@ -36,5 +48,19 @@ class MembersActivity : BaseActivity() {
         }
 
         toolbar_members_activity.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    /**
+     * A function to setup assigned members list into recyclerview.
+     */
+    fun setupMembersList(list: ArrayList<User>) {
+
+        hideProgressDialog()
+
+        rv_members_list.layoutManager = LinearLayoutManager(this@MembersActivity)
+        rv_members_list.setHasFixedSize(true)
+
+        val adapter = MemberListItemsAdapter(this@MembersActivity, list)
+        rv_members_list.adapter = adapter
     }
 }

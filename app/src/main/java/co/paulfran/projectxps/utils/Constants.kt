@@ -21,6 +21,8 @@ object Constants {
     const val DOCUMENT_ID: String = "documentId"
     const val TASK_LIST: String = "taskList"
 
+    const val ID: String = "id"
+
     const val BOARD_DETAIL: String = "board_detail"
 
     const val READ_STORAGE_PERMISSION_CODE = 1
