@@ -14,6 +14,7 @@ import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.Board
 import co.paulfran.projectxps.models.Card
 import co.paulfran.projectxps.models.Task
+import co.paulfran.projectxps.models.User
 import co.paulfran.projectxps.utils.Constants
 import kotlinx.android.synthetic.main.activity_task_list.*
 
@@ -21,9 +22,10 @@ class TaskListActivity : BaseActivity() {
 
     // A global variable for Board Details.
     private lateinit var mBoardDetails: Board
-
     // A global variable for board document id as mBoardDocumentId
     private lateinit var mBoardDocumentId: String
+    // A global variable for Assigned Members List.
+    private lateinit var mAssignedMembersDetailList: ArrayList<User>
 
     /**
      * A companion object to declare the constants.
@@ -125,7 +127,13 @@ class TaskListActivity : BaseActivity() {
         val adapter = TaskListItemsAdapter(this@TaskListActivity, board.taskList)
         rv_task_list.adapter = adapter // Attach the adapter to the recyclerView.
 
-
+        // Get all the members detail list which are assigned to the board.)
+        // Show the progress dialog.
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getAssignedMembersListDetails(
+            this@TaskListActivity,
+            mBoardDetails.assignedTo
+        )
     }
 
     /**
@@ -227,6 +235,17 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
+        intent.putExtra(Constants.BOARD_MEMBERS_LIST, mAssignedMembersDetailList)
         startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
+    }
+
+    /**
+     * A function to get assigned members detail list.
+     */
+    fun boardMembersDetailList(list: ArrayList<User>) {
+
+        mAssignedMembersDetailList = list
+
+        hideProgressDialog()
     }
 }

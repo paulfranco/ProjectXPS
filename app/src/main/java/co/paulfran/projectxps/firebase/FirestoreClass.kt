@@ -228,7 +228,7 @@ class FirestoreClass {
     /**
      * A function to get the list of user details which is assigned to the board.
      */
-    fun getAssignedMembersListDetails(activity: MembersActivity, assignedTo: ArrayList<String>) {
+    fun getAssignedMembersListDetails(activity: Activity, assignedTo: ArrayList<String>) {
 
         mFireStore.collection(Constants.USERS) // Collection Name
             .whereIn(Constants.ID, assignedTo) // Here the database field name and the id's of the members.
@@ -244,10 +244,18 @@ class FirestoreClass {
                     usersList.add(user)
                 }
 
-                activity.setupMembersList(usersList)
+                if(activity is MembersActivity) {
+                    activity.setupMembersList(usersList)
+                }else if(activity is TaskListActivity) {
+                    activity.boardMembersDetailList(usersList)
+                }
             }
             .addOnFailureListener { e ->
-                activity.hideProgressDialog()
+                if(activity is MembersActivity) {
+                    activity.hideProgressDialog()
+                }else if(activity is TaskListActivity){
+                    activity.hideProgressDialog()
+                }
                 Log.e(
                     activity.javaClass.simpleName,
                     "Error while creating a board.",
