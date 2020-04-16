@@ -217,4 +217,11 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this@TaskListActivity, mBoardDetails)
     }
+
+    /**
+     * A function for viewing and updating card details.
+     */
+    fun cardDetails(taskListPosition: Int, cardPosition: Int) {
+        startActivity(Intent(this@TaskListActivity, CardDetailsActivity::class.java))
+    }
 }
