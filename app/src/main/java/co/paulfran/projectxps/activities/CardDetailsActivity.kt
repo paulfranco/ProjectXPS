@@ -14,6 +14,7 @@ import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.Board
 import co.paulfran.projectxps.models.Card
 import co.paulfran.projectxps.models.Task
+import co.paulfran.projectxps.models.User
 import co.paulfran.projectxps.utils.Constants
 import kotlinx.android.synthetic.main.activity_card_details.*
 
@@ -26,7 +27,8 @@ class CardDetailsActivity : BaseActivity() {
     private var mCardPosition: Int = -1
     // A global variable for selected label color
     private var mSelectedColor: String = ""
-
+    // A global variable for Assigned Members List.
+    private lateinit var mMembersDetailList: ArrayList<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,12 @@ class CardDetailsActivity : BaseActivity() {
         // Set the card name in the EditText for editing.
         et_name_card_details.setText(mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name)
         et_name_card_details.setSelection(et_name_card_details.text.toString().length) // The cursor after the string length
+
+        // Get the already selected label color and set it to the TextView background.)
+        mSelectedColor = mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].labelColor
+        if (mSelectedColor.isNotEmpty()) {
+            setColor()
+        }
 
         // click event for selecting a label color and launch the dialog.
         tv_select_label_color.setOnClickListener {
@@ -103,6 +111,10 @@ class CardDetailsActivity : BaseActivity() {
         }
         if (intent.hasExtra(Constants.CARD_LIST_ITEM_POSITION)) {
             mCardPosition = intent.getIntExtra(Constants.CARD_LIST_ITEM_POSITION, -1)
+        }
+
+        if (intent.hasExtra(Constants.BOARD_MEMBERS_LIST)) {
+            mMembersDetailList = intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
         }
     }
 
@@ -227,7 +239,8 @@ class CardDetailsActivity : BaseActivity() {
         val listDialog = object : LabelColorListDialog(
             this@CardDetailsActivity,
             colorsList,
-            resources.getString(R.string.str_select_label_color)
+            resources.getString(R.string.str_select_label_color),
+            mSelectedColor
         ) {
             override fun onItemSelected(color: String) {
                 mSelectedColor = color

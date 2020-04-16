@@ -28,6 +28,7 @@ object Constants {
     // Add all the required constants for passing the details to CardDetailsActivity through intent
     const val TASK_LIST_ITEM_POSITION: String = "task_list_item_position"
     const val CARD_LIST_ITEM_POSITION: String = "card_list_item_position"
+    const val BOARD_MEMBERS_LIST: String = "board_members_list"
 
     const val READ_STORAGE_PERMISSION_CODE = 1
 
