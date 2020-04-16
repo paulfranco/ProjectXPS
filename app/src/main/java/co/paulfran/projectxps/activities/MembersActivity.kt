@@ -21,6 +21,8 @@ class MembersActivity : BaseActivity() {
 
     private lateinit var mBoardDetails: Board
 
+    private lateinit var mAssignedMembersList:ArrayList<User>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_members)
@@ -81,6 +83,8 @@ class MembersActivity : BaseActivity() {
      */
     fun setupMembersList(list: ArrayList<User>) {
 
+        mAssignedMembersList = list
+
         hideProgressDialog()
 
         rv_members_list.layoutManager = LinearLayoutManager(this@MembersActivity)
@@ -104,6 +108,12 @@ class MembersActivity : BaseActivity() {
 
             if (email.isNotEmpty()) {
                 dialog.dismiss()
+
+                // Show the progress dialog.
+                showProgressDialog(resources.getString(R.string.please_wait))
+                // Get the member details from the database
+                FirestoreClass().getMemberDetails(this@MembersActivity, email)
+
             } else {
                 Toast.makeText(
                     this@MembersActivity,
@@ -117,5 +127,29 @@ class MembersActivity : BaseActivity() {
         })
         //Start the dialog and display it on screen.
         dialog.show()
+    }
+
+    // Here we will get the result of the member if it found in the database.
+    fun memberDetails(user: User) {
+
+        // Here add the user id to the existing assigned members list of the board.
+
+        mBoardDetails.assignedTo.add(user.id)
+
+        // Finally assign the member to the board.
+
+        FirestoreClass().assignMemberToBoard(this@MembersActivity, mBoardDetails, user)
+    }
+
+    /**
+     * A function to get the result of assigning the members.
+     */
+    fun memberAssignSuccess(user: User) {
+
+        hideProgressDialog()
+
+        mAssignedMembersList.add(user)
+
+        setupMembersList(mAssignedMembersList)
     }
 }
