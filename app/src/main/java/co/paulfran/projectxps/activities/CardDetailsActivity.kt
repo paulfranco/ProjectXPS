@@ -2,6 +2,8 @@ package co.paulfran.projectxps.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import co.paulfran.projectxps.R
 import co.paulfran.projectxps.models.Board
 import co.paulfran.projectxps.utils.Constants
@@ -22,6 +24,11 @@ class CardDetailsActivity : BaseActivity() {
         getIntentData()
 
         setupActionBar()
+
+        // Set the card name in the EditText for editing.
+        et_name_card_details.setText(mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name)
+        et_name_card_details.setSelection(et_name_card_details.text.toString().length) // The cursor after the string length
+
     }
 
     /**
@@ -41,6 +48,23 @@ class CardDetailsActivity : BaseActivity() {
         }
 
         toolbar_card_details_activity.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu to use in the action bar
+        menuInflater.inflate(R.menu.menu_delete_card, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle presses on the action bar menu items
+        when (item.itemId) {
+            R.id.action_delete_card -> {
+
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     // A function to get all the data that is sent through intent.
