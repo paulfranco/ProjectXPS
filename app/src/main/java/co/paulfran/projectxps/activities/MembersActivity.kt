@@ -1,5 +1,6 @@
 package co.paulfran.projectxps.activities
 
+import android.app.Activity
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,9 @@ class MembersActivity : BaseActivity() {
 
     private lateinit var mAssignedMembersList:ArrayList<User>
 
+    // A global variable for notifying any changes done or not in the assigned members list.
+    private var anyChangesDone: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_members)
@@ -40,6 +44,15 @@ class MembersActivity : BaseActivity() {
             this@MembersActivity,
             mBoardDetails.assignedTo
         )
+    }
+
+    // Send the result to the base activity onBackPressed.
+
+    override fun onBackPressed() {
+        if (anyChangesDone) {
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
     }
 
     /**
@@ -149,6 +162,8 @@ class MembersActivity : BaseActivity() {
         hideProgressDialog()
 
         mAssignedMembersList.add(user)
+
+        anyChangesDone = true
 
         setupMembersList(mAssignedMembersList)
     }
