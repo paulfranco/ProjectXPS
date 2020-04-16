@@ -2,12 +2,14 @@ package co.paulfran.projectxps.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import co.paulfran.projectxps.R
+import co.paulfran.projectxps.dialogs.LabelColorListDialog
 import co.paulfran.projectxps.firebase.FirestoreClass
 import co.paulfran.projectxps.models.Board
 import co.paulfran.projectxps.models.Card
@@ -22,6 +24,9 @@ class CardDetailsActivity : BaseActivity() {
     private var mTaskListPosition: Int = -1
     // A global variable for card item position
     private var mCardPosition: Int = -1
+    // A global variable for selected label color
+    private var mSelectedColor: String = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,11 @@ class CardDetailsActivity : BaseActivity() {
         // Set the card name in the EditText for editing.
         et_name_card_details.setText(mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name)
         et_name_card_details.setSelection(et_name_card_details.text.toString().length) // The cursor after the string length
+
+        // click event for selecting a label color and launch the dialog.
+        tv_select_label_color.setOnClickListener {
+            labelColorsListDialog()
+        }
 
         // Add a click event for update button and also call the function to update the card details.)
         btn_update_card_details.setOnClickListener {
@@ -116,7 +126,8 @@ class CardDetailsActivity : BaseActivity() {
         val card = Card(
             et_name_card_details.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].createdBy,
-            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo
+            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo,
+            mSelectedColor
         )
 
         // Here we have assigned the update card details to the task list using the card position.
@@ -179,5 +190,50 @@ class CardDetailsActivity : BaseActivity() {
         // Show the progress dialog.
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this@CardDetailsActivity, mBoardDetails)
+    }
+
+    /**
+     * A function to remove the text and set the label color to the TextView.
+     */
+    private fun setColor() {
+        tv_select_label_color.text = ""
+        tv_select_label_color.setBackgroundColor(Color.parseColor(mSelectedColor))
+    }
+
+    /**
+     * A function to add some static label colors in the list.
+     */
+    private fun colorsList(): ArrayList<String> {
+
+        val colorsList: ArrayList<String> = ArrayList()
+        colorsList.add("#43C86F")
+        colorsList.add("#0C90F1")
+        colorsList.add("#F72400")
+        colorsList.add("#7A8089")
+        colorsList.add("#D57C1D")
+        colorsList.add("#770000")
+        colorsList.add("#0022F8")
+
+        return colorsList
+    }
+
+    /**
+     * A function to launch the label color list dialog.
+     */
+    private fun labelColorsListDialog() {
+
+        val colorsList: ArrayList<String> = colorsList()
+
+        val listDialog = object : LabelColorListDialog(
+            this@CardDetailsActivity,
+            colorsList,
+            resources.getString(R.string.str_select_label_color)
+        ) {
+            override fun onItemSelected(color: String) {
+                mSelectedColor = color
+                setColor()
+            }
+        }
+        listDialog.show()
     }
 }
