@@ -7,15 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import co.paulfran.projectxps.R
+import co.paulfran.projectxps.adapters.CardMemberListItemsAdapter
 import co.paulfran.projectxps.dialogs.LabelColorListDialog
 import co.paulfran.projectxps.dialogs.MembersListDialog
 import co.paulfran.projectxps.firebase.FirestoreClass
-import co.paulfran.projectxps.models.Board
-import co.paulfran.projectxps.models.Card
-import co.paulfran.projectxps.models.Task
-import co.paulfran.projectxps.models.User
+import co.paulfran.projectxps.models.*
 import co.paulfran.projectxps.utils.Constants
 import kotlinx.android.synthetic.main.activity_card_details.*
 
@@ -53,6 +53,10 @@ class CardDetailsActivity : BaseActivity() {
         tv_select_label_color.setOnClickListener {
             labelColorsListDialog()
         }
+
+        // Call the function to setup the recyclerView for assigned members.
+        // START
+        setupSelectedMembersList()
 
         //Add the click event to launch the members list dialog
 
@@ -288,8 +292,79 @@ class CardDetailsActivity : BaseActivity() {
         ) {
             override fun onItemSelected(user: User, action: String) {
                 // Implement selected members functionality
+                if (action == Constants.SELECT) {
+                    if (!mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.contains(
+                            user.id
+                        )
+                    ) {
+                        mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.add(
+                            user.id
+                        )
+                    }
+                } else {
+                    mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.remove(
+                        user.id
+                    )
+
+                    for (i in mMembersDetailList.indices) {
+                        if (mMembersDetailList[i].id == user.id) {
+                            mMembersDetailList[i].selected = false
+                        }
+                    }
+                }
+
+                setupSelectedMembersList()
             }
         }
         listDialog.show()
+    }
+
+    /**
+     * A function to setup the recyclerView for card assigned members.
+     */
+    private fun setupSelectedMembersList() {
+
+        // Assigned members of the Card.
+        val cardAssignedMembersList =
+            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo
+
+        // A instance of selected members list.
+        val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
+
+        // Here we got the detail list of members and add it to the selected members list as required.
+        for (i in mMembersDetailList.indices) {
+            for (j in cardAssignedMembersList) {
+                if (mMembersDetailList[i].id == j) {
+                    val selectedMember = SelectedMembers(
+                        mMembersDetailList[i].id,
+                        mMembersDetailList[i].image
+                    )
+
+                    selectedMembersList.add(selectedMember)
+                }
+            }
+        }
+
+        if (selectedMembersList.size > 0) {
+
+            // This is for the last item to show.
+            selectedMembersList.add(SelectedMembers("", ""))
+
+            tv_select_members.visibility = View.GONE
+            rv_selected_members_list.visibility = View.VISIBLE
+
+            rv_selected_members_list.layoutManager = GridLayoutManager(this@CardDetailsActivity, 6)
+            val adapter = CardMemberListItemsAdapter(this@CardDetailsActivity, selectedMembersList)
+            rv_selected_members_list.adapter = adapter
+            adapter.setOnClickListener(object :
+                CardMemberListItemsAdapter.OnClickListener {
+                override fun onClick() {
+                    membersListDialog()
+                }
+            })
+        } else {
+            tv_select_members.visibility = View.VISIBLE
+            rv_selected_members_list.visibility = View.GONE
+        }
     }
 }
