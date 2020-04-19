@@ -153,6 +153,9 @@ class CardDetailsActivity : BaseActivity() {
             mSelectedColor
         )
 
+        val taskList: ArrayList<Task> = mBoardDetails.taskList
+        taskList.removeAt(taskList.size - 1)
+
         // Here we have assigned the update card details to the task list using the card position.
         mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition] = card
 
