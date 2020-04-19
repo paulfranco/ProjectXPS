@@ -22,31 +22,20 @@ class TaskListActivity : BaseActivity() {
 
     // A global variable for Board Details.
     private lateinit var mBoardDetails: Board
+
     // A global variable for board document id as mBoardDocumentId
     private lateinit var mBoardDocumentId: String
+
     // A global variable for Assigned Members List.
     lateinit var mAssignedMembersDetailList: ArrayList<User>
-
-
-    /**
-     * A companion object to declare the constants.
-     */
-    companion object {
-        //A unique code for starting the activity for result
-        const val MEMBERS_REQUEST_CODE: Int = 13
-        const val CARD_DETAILS_REQUEST_CODE: Int = 14
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_list)
 
-
-        var boardDocumentId = ""
         if (intent.hasExtra(Constants.DOCUMENT_ID)) {
             mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID)!!
         }
-
 
         // Show the progress dialog.
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -90,11 +79,10 @@ class TaskListActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    // Add the onActivityResult function add based on the requested document get the updated board details.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK
-            && requestCode == MEMBERS_REQUEST_CODE || requestCode == CARD_DETAILS_REQUEST_CODE
+            && (requestCode == MEMBERS_REQUEST_CODE || requestCode == CARD_DETAILS_REQUEST_CODE)
         ) {
             // Show the progress dialog.
             showProgressDialog(resources.getString(R.string.please_wait))
@@ -116,8 +104,6 @@ class TaskListActivity : BaseActivity() {
         // Call the function to setup action bar.
         setupActionBar()
 
-
-        // Get all the members detail list which are assigned to the board.)
         // Show the progress dialog.
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getAssignedMembersListDetails(
@@ -141,21 +127,7 @@ class TaskListActivity : BaseActivity() {
 
         // Show the progress dialog.
         showProgressDialog(resources.getString(R.string.please_wait))
-
         FirestoreClass().addUpdateTaskList(this@TaskListActivity, mBoardDetails)
-    }
-
-    /**
-     * A function to get the result of add or updating the task list.
-     */
-    fun addUpdateTaskListSuccess() {
-        // close the dialog when successfully load activity
-        hideProgressDialog()
-
-        // Here get the updated board details.
-        // Show the progress dialog.
-        showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getBoardDetails(this@TaskListActivity, mBoardDetails.documentId)
     }
 
     /**
@@ -173,11 +145,10 @@ class TaskListActivity : BaseActivity() {
         FirestoreClass().addUpdateTaskList(this@TaskListActivity, mBoardDetails)
     }
 
-
     /**
      * A function to delete the task list from database.
      */
-    fun deleteTaskList(position: Int){
+    fun deleteTaskList(position: Int) {
 
         mBoardDetails.taskList.removeAt(position)
 
@@ -186,6 +157,19 @@ class TaskListActivity : BaseActivity() {
         // Show the progress dialog.
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().addUpdateTaskList(this@TaskListActivity, mBoardDetails)
+    }
+
+    /**
+     * A function to get the result of add or updating the task list.
+     */
+    fun addUpdateTaskListSuccess() {
+
+        hideProgressDialog()
+
+        // Here get the updated board details.
+        // Show the progress dialog.
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getBoardDetails(this@TaskListActivity, mBoardDetails.documentId)
     }
 
     /**
@@ -249,5 +233,30 @@ class TaskListActivity : BaseActivity() {
         // Create an instance of TaskListItemsAdapter and pass the task list to it.
         val adapter = TaskListItemsAdapter(this@TaskListActivity, mBoardDetails.taskList)
         rv_task_list.adapter = adapter // Attach the adapter to the recyclerView.
+    }
+
+    /**
+     * A function to update the card list in the particular task list.
+     */
+    fun updateCardsInTaskList(taskListPosition: Int, cards: ArrayList<Card>) {
+
+        // Remove the last item
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+
+        mBoardDetails.taskList[taskListPosition].cards = cards
+
+        // Show the progress dialog.
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().addUpdateTaskList(this@TaskListActivity, mBoardDetails)
+    }
+
+    /**
+     * A companion object to declare the constants.
+     */
+    companion object {
+        //A unique code for starting the activity for result
+        const val MEMBERS_REQUEST_CODE: Int = 13
+
+        const val CARD_DETAILS_REQUEST_CODE: Int = 14
     }
 }

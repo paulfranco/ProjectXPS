@@ -51,6 +51,7 @@ open class CardListItemsAdapter(
         val model = list[position]
 
         if (holder is MyViewHolder) {
+
             if (model.labelColor.isNotEmpty()) {
                 holder.itemView.view_label_color.visibility = View.VISIBLE
                 holder.itemView.view_label_color.setBackgroundColor(Color.parseColor(model.labelColor))
@@ -60,7 +61,6 @@ open class CardListItemsAdapter(
 
             holder.itemView.tv_card_name.text = model.name
 
-            // Now with use of public list of Assigned members detail List populate the recyclerView for Assigned Members.
             if ((context as TaskListActivity).mAssignedMembersDetailList.size > 0) {
                 // A instance of selected members list.
                 val selectedMembersList: ArrayList<SelectedMembers> = ArrayList()
@@ -104,7 +104,7 @@ open class CardListItemsAdapter(
                 }
             }
 
-            holder.itemView.setOnClickListener{
+            holder.itemView.setOnClickListener {
                 if (onClickListener != null) {
                     onClickListener!!.onClick(position)
                 }
@@ -130,7 +130,7 @@ open class CardListItemsAdapter(
      * An interface for onclick items.
      */
     interface OnClickListener {
-        fun onClick(position: Int)
+        fun onClick(cardPosition: Int)
     }
 
     /**
