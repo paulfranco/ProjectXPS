@@ -25,7 +25,8 @@ class TaskListActivity : BaseActivity() {
     // A global variable for board document id as mBoardDocumentId
     private lateinit var mBoardDocumentId: String
     // A global variable for Assigned Members List.
-    private lateinit var mAssignedMembersDetailList: ArrayList<User>
+    lateinit var mAssignedMembersDetailList: ArrayList<User>
+
 
     /**
      * A companion object to declare the constants.
@@ -115,17 +116,6 @@ class TaskListActivity : BaseActivity() {
         // Call the function to setup action bar.
         setupActionBar()
 
-        // Here we are appending an item view for adding a list task list for the board.
-        val addTaskList = Task(resources.getString(R.string.add_list))
-        board.taskList.add(addTaskList)
-
-        rv_task_list.layoutManager =
-            LinearLayoutManager(this@TaskListActivity, LinearLayoutManager.HORIZONTAL, false)
-        rv_task_list.setHasFixedSize(true)
-
-        // Create an instance of TaskListItemsAdapter and pass the task list to it.
-        val adapter = TaskListItemsAdapter(this@TaskListActivity, board.taskList)
-        rv_task_list.adapter = adapter // Attach the adapter to the recyclerView.
 
         // Get all the members detail list which are assigned to the board.)
         // Show the progress dialog.
@@ -247,5 +237,17 @@ class TaskListActivity : BaseActivity() {
         mAssignedMembersDetailList = list
 
         hideProgressDialog()
+
+        // Here we are appending an item view for adding a list task list for the board.
+        val addTaskList = Task(resources.getString(R.string.add_list))
+        mBoardDetails.taskList.add(addTaskList)
+
+        rv_task_list.layoutManager =
+            LinearLayoutManager(this@TaskListActivity, LinearLayoutManager.HORIZONTAL, false)
+        rv_task_list.setHasFixedSize(true)
+
+        // Create an instance of TaskListItemsAdapter and pass the task list to it.
+        val adapter = TaskListItemsAdapter(this@TaskListActivity, mBoardDetails.taskList)
+        rv_task_list.adapter = adapter // Attach the adapter to the recyclerView.
     }
 }
