@@ -36,6 +36,11 @@ object Constants {
     const val READ_STORAGE_PERMISSION_CODE = 1
     const val PICK_IMAGE_REQUEST_CODE = 2
 
+    const val PROJECTXPS_PREFERENCES: String = "ProjectXPSPrefs"
+
+    const val FCM_TOKEN:String = "fcmToken"
+    const val FCM_TOKEN_UPDATED:String = "fcmTokenUpdated"
+
 
     /**
      * A function for user profile image selection from phone storage.
